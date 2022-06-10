@@ -18,6 +18,7 @@ jobs:
 
       - uses: codfish/semantic-release-action@v1
         with:
+          dryrun: true
           plugins: |
             [
               "@semantic-release/commit-analyzer",
@@ -31,5 +32,6 @@ jobs:
       - name: Publish to Visual Studio Marketplace
         uses: HaaLeo/publish-vscode-extension@v1
         with:
+          dryrun: true
           pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
           registryUrl: https://marketplace.visualstudio.com
