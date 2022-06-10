@@ -1,7 +1,7 @@
-# About SSHExtension
+# About SmartSSH
 
-[![Latest Release](https://vsmarketplacebadge.apphb.com/version/itzrabbs.sshextension.svg)](https://marketplace.visualstudio.com/items?itemName=itzrabbs.sshextension)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs-short/itzrabbs.sshextension.svg)](https://marketplace.visualstudio.com/items?itemName=itzrabbs.sshextension)
+[![Latest Release](https://vsmarketplacebadge.apphb.com/version/itzrabbs.smartssh.svg)](https://marketplace.visualstudio.com/items?itemName=itzrabbs.smartssh)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs-short/itzrabbs.smartssh.svg)](https://marketplace.visualstudio.com/items?itemName=itzrabbs.smartssh)
 
 This extension allows you to open an SSH connection in the integrated terminal.
 The extension was created in order to have access to the SSH in conjunction with the already available access to the FTP.  
@@ -16,7 +16,7 @@ SSH port forwarding.
 
 ### Open terminal from server list
 - Open the Command Palette (usually `F1` or `Ctrl+Shift+P`).  
-- Select the command `SSHExtension: Open SSH Connection`.  
+- Select the command `SmartSSH: Open SSH Connection`.  
 - Select a server from the list.
 
 ![Demo Open connection from list](./images/open_connection_from_list.gif)
@@ -30,7 +30,7 @@ SSH port forwarding.
 
 ### SSH port forwarding
 - Open the Command Palette (usually `F1` or `Ctrl+Shift+P`).  
-- Select the command `SSHExtension: SSH Port Forwarding`.  
+- Select the command `SmartSSH: SSH Port Forwarding`.  
 - Select a forwarding type from: `Local to remote` (-L), `Local to remote` (-R), `SOCKS` (-D), `Recently used` (if exists saved arguments).  
 - Enter the required parameters on request.  
 - (Optionally) You can save your selections for faster port forwarding in the future.
@@ -48,11 +48,11 @@ You should still have an ssh agent, not necessarily that it is available in the 
 You can use ready-made config file from this extensions (if you use):
 - ftp-simple ([see info about configuring](https://marketplace.visualstudio.com/items?itemName=humy2833.ftp-simple#user-content-config-setting-example), servers with `"type": "sftp"` only).
 
-Or you can use extension settings simply add `sshextension.serverList` directive.
+Or you can use extension settings simply add `smartssh.serverList` directive.
 
 ## Extension settings
 
-#### sshextension.serverList
+#### smartssh.serverList
 
   * Type: `Array`
   * Defaut: `[]`
@@ -72,7 +72,7 @@ Server object parameters:
 For example:
 ```json
 {
-    "sshextension.serverList": [
+    "smartssh.serverList": [
         {
             "name": "Example server",
             "host": "example.com",
@@ -93,7 +93,7 @@ For example:
 }
 ```
 
-#### sshextension.customCommands
+#### smartssh.customCommands
 
   * Type: `Array`
   * Defaut: `[]`
@@ -102,7 +102,7 @@ Specifies custom commands which will execute on session start.
 For example:
 ```json
 {
-  "sshextension.customCommands": [
+  "smartssh.customCommands": [
     "pwd",
     "ls"
   ]
@@ -110,7 +110,7 @@ For example:
 ```
 ![Demo Custom commands](./images/custom_commands.gif)
 
-#### sshextension.openProjectCatalog
+#### smartssh.openProjectCatalog
 
   * Type: `Boolean`
   * Defaut: `false`
@@ -119,11 +119,11 @@ Open the project directory from the ftp-simple config, if it exists, after start
 For example:
 ```json
 {
-  "sshextension.openProjectCatalog": true
+  "smartssh.openProjectCatalog": true
 }
 ```
 
-#### sshextension.recentlyUsedForwardings
+#### smartssh.recentlyUsedForwardings
 
   * Type: `Array`
   * Defaut: `[]`
@@ -132,13 +132,13 @@ In this place stored all saved port forwarding args. You can save the arguments 
 For example:
 ```json
 {
-  "sshextension.recentlyUsedForwardings": [
+  "smartssh.recentlyUsedForwardings": [
     "-R 9000:localhost:9000"
   ]
 }
 ```
 
-#### sshextension.allowMultipleConnections
+#### smartssh.allowMultipleConnections
 
   * Type: `Boolean`
   * Defaut: `false`
@@ -147,11 +147,11 @@ Allow you open few connections for one server at the same time.
 For example:
 ```json
 {
-  "sshextension.allowMultipleConnections": true
+  "smartssh.allowMultipleConnections": true
 }
 ```
 
-#### sshextension.showHostsInPickLists
+#### smartssh.showHostsInPickLists
 
   * Type: `Boolean`
   * Defaut: `false`
@@ -160,7 +160,7 @@ Show usernames and hosthames in pick lists instead on server names.
 For example:
 ```json
 {
-  "sshextension.showHostsInPickLists": true
+  "smartssh.showHostsInPickLists": true
 }
 ```
 
@@ -173,7 +173,7 @@ And a few more ~~secret (before their release)~~ features... ).
 ## Special thanks
 
 [eduardbadillo](https://github.com/eduardbadillo)  
-Added ability to use different port in ssh connections *([pull request](https://github.com/VitalyKondratiev/vscode-sshextension/pull/3) merged in version 0.1.2)*
+Added ability to use different port in ssh connections *([pull request](https://github.com/VitalyKondratiev/vscode-smartssh/pull/3) merged in version 0.1.2)*
 
 ## Feedback
 

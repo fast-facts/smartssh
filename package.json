@@ -1,9 +1,9 @@
 {
-  "name": "sshextension",
-  "displayName": "SSHExtension",
+  "name": "smartssh",
+  "displayName": "SmartSSH",
   "description": "Extension for SSH connections using the ftp-simple settings",
-  "version": "0.0.0-semantic-release",
-  "publisher": "itzrabbs",
+  "version": "1.0.0",
+  "publisher": "smartssh",
   "license": "MIT",
   "engines": {
     "vscode": "^1.10.0"
@@ -21,29 +21,29 @@
     "theme": "light"
   },
   "activationEvents": [
-    "onCommand:sshextension.openConnection",
-    "onCommand:sshextension.portForwarding",
+    "onCommand:smartssh.openConnection",
+    "onCommand:smartssh.portForwarding",
     "*"
   ],
   "main": "./extension",
   "contributes": {
     "commands": [
       {
-        "command": "sshextension.openConnection",
+        "command": "smartssh.openConnection",
         "title": "Open SSH Connection",
-        "category": "SSHExtension"
+        "category": "SmartSSH"
       },
       {
-        "command": "sshextension.portForwarding",
+        "command": "smartssh.portForwarding",
         "title": "SSH Port Forwarding",
-        "category": "SSHExtension"
+        "category": "SmartSSH"
       }
     ],
     "configuration": {
       "type": "object",
-      "title": "SSHExtension configuration",
+      "title": "SmartSSH configuration",
       "properties": {
-        "sshextension.customCommands": {
+        "smartssh.customCommands": {
           "type": [
             "array"
           ],
@@ -53,7 +53,7 @@
           "default": [],
           "description": "Specifies custom commands which will execute on session start"
         },
-        "sshextension.recentlyUsedForwardings": {
+        "smartssh.recentlyUsedForwardings": {
           "type": [
             "array"
           ],
@@ -63,22 +63,22 @@
           "default": [],
           "description": "In this place stored all saved port forwarding args"
         },
-        "sshextension.openProjectCatalog": {
+        "smartssh.openProjectCatalog": {
           "type": "boolean",
           "default": false,
           "description": "Open the project directory from the ftp-simple config, if it exists, after starting the SSH session"
         },
-        "sshextension.allowMultipleConnections": {
+        "smartssh.allowMultipleConnections": {
           "type": "boolean",
           "default": false,
           "description": "Allow you open few connections for one server at the same time"
         },
-        "sshextension.showHostsInPickLists": {
+        "smartssh.showHostsInPickLists": {
           "type": "boolean",
           "default": false,
           "description": "Show usernames and hosthames in pick lists instead on server names"
         },
-        "sshextension.serverList": {
+        "smartssh.serverList": {
           "type": "array",
           "items": {
             "type": "object",
@@ -146,24 +146,25 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ItzRabbs/SSHExtension.git"
+    "url": "https://github.com/ItzRabbs/vscode-sshextension.git"
   },
   "bugs": {
-    "url": "https://github.com/ItzRabbs/SSHExtension/issues"
+    "url": "https://github.com/ItzRabbs/vscode-sshextension/issues"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
     "@types/node": "^17.0.41",
-    "@types/vscode": "^1.68.0",
+    "@types/vscode": "^1.10.0",
     "eslint": "^8.17.0",
     "mocha": "^10.0.0",
+    "semantic-release-vsce": "^5.0.17",
     "typescript": "^4.7.3"
   },
   "dependencies": {
     "command-exists": "^1.2.2",
     "filewatcher": "^3.0.1",
-    "is-path-inside": "^1.0.0",
+    "is-path-inside": "^3.0.3",
     "moment": "^2.22.2",
-    "upath": "^1.0.0"
+    "upath": "^2.0.1"
   }
 }
