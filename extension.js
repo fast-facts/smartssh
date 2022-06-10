@@ -33,12 +33,12 @@ function activate(context) {
   initExtension();
 
   // Command palette 'Open SSH Connection'
-  context.subscriptions.push(vscode.commands.registerCommand('sshextension.openConnection', function () {
+  context.subscriptions.push(vscode.commands.registerCommand('smartssh.openConnection', function () {
     selectServer().then(s => openSSHConnection(s, false));
   }));
 
   // Command palette 'SSH Port Forwarding'
-  context.subscriptions.push(vscode.commands.registerCommand('sshextension.portForwarding', function () {
+  context.subscriptions.push(vscode.commands.registerCommand('smartssh.portForwarding', function () {
     selectServer().then(s => createForwarding(s));
   }));
 
@@ -64,7 +64,7 @@ function activate(context) {
   context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(function (event) {
     manageFastOpenConnectionButtonState();
   }));
-  context.subscriptions.push(vscode.commands.registerCommand('sshextension.fastOpenConnection', function (c) {
+  context.subscriptions.push(vscode.commands.registerCommand('smartssh.fastOpenConnection', function (c) {
     openSSHConnection(fastOpenConnectionServerName, true);
   }));
 
@@ -138,7 +138,7 @@ function openSSHConnection(serverName, isFastConnection, forwardingArgs = null) 
   }, { "terminalName": serverName, "isForwarding": (forwardingArgs != null) });
   var terminalIsNew = true;
   var hasErrors = false;
-  if (terminal === undefined || (vscode.workspace.getConfiguration('sshextension').allowMultipleConnections && forwardingArgs == null)) { // If the terminal does not exist
+  if (terminal === undefined || (vscode.workspace.getConfiguration('smartssh').allowMultipleConnections && forwardingArgs == null)) { // If the terminal does not exist
     outputChannel.appendLine("New terminal session initialization for '" + server.configuration.host + "'...");
     if (server.configuration.host === undefined || server.configuration.username === undefined) {
       outputChannel.appendLine("Check host or username for '" + server.configuration.host + "'");
@@ -159,7 +159,7 @@ function openSSHConnection(serverName, isFastConnection, forwardingArgs = null) 
         sshAuthorizationMethod = "byPrivateKey";
       }
       var remoteCommands = [];
-      if (vscode.workspace.getConfiguration('sshextension').openProjectCatalog) {
+      if (vscode.workspace.getConfiguration('smartssh').openProjectCatalog) {
         if (isFastConnection)
           remoteCommands.push("cd " + fastOpenConnectionProjectPath);
       } else if (server.configuration.path !== undefined) {
@@ -168,8 +168,8 @@ function openSSHConnection(serverName, isFastConnection, forwardingArgs = null) 
       if (server.configuration.customCommands !== undefined && server.configuration.customCommands.length) {
         remoteCommands.push(...server.configuration.customCommands);
       }
-      else if (vscode.workspace.getConfiguration('sshextension').customCommands.length) {
-        remoteCommands.push(...vscode.workspace.getConfiguration('sshextension').customCommands);
+      else if (vscode.workspace.getConfiguration('smartssh').customCommands.length) {
+        remoteCommands.push(...vscode.workspace.getConfiguration('smartssh').customCommands);
       }
       if (remoteCommands.length > 0) {
         sshCommand += ' -t "' + remoteCommands.map(x => x + '; ').join('') + 'bash --login"';
@@ -216,7 +216,7 @@ function createForwarding(serverName) {
       vscode.window.showInformationMessage("Want to save this forwarding in recently used?", "Yes").then(function (button) {
         if (button == "Yes") {
           recentlyUsedForwardings.push(forwardingArgs);
-          vscode.workspace.getConfiguration("sshextension").update("recentlyUsedForwardings", recentlyUsedForwardings, true)
+          vscode.workspace.getConfiguration("smartssh").update("recentlyUsedForwardings", recentlyUsedForwardings, true)
         }
       });
     }
@@ -242,7 +242,7 @@ function createForwarding(serverName) {
       "option": "-D"
     }
   }
-  var recentlyUsedForwardings = vscode.workspace.getConfiguration("sshextension").recentlyUsedForwardings;
+  var recentlyUsedForwardings = vscode.workspace.getConfiguration("smartssh").recentlyUsedForwardings;
   if (recentlyUsedForwardings.length) {
     types['Recently used'] = {};
   }
@@ -343,7 +343,7 @@ function initExtension() {
   checkSSHExecutable();
   loadServerList(loadServerConfigs());
   fastOpenConnectionButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-  fastOpenConnectionButton.command = "sshextension.fastOpenConnection";
+  fastOpenConnectionButton.command = "smartssh.fastOpenConnection";
   manageFastOpenConnectionButtonState();
   return true;
 }

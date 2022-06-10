@@ -16,22 +16,43 @@ jobs:
           node-version: 16
       - run: npm install
 
-      - run: npm run build:library
-      
       - uses: codfish/semantic-release-action@v1
+        id: semantic
         with:
           plugins: |
             [
               "@semantic-release/commit-analyzer",
               "@semantic-release/release-notes-generator",
-              "@semantic-release/github"
+              [
+                "semantic-release-vsce",
+                {
+                  "packageVsix": true
+                }
+              ],
+              [
+                "@semantic-release/github",
+                {
+                  "assets": [
+                    {
+                      "path": "*.vsix",
+                      "label": "Extension File"
+                    }
+                  ]
+                }
+              ]
             ]
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VSCE_PAT: ${{ secrets.VS_MARKETPLACE_TOKEN }}
         continue-on-error: true
 
-      - name: Publish to Visual Studio Marketplace
-        uses: HaaLeo/publish-vscode-extension@v1
-        with:
-          pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
-          registryUrl: https://marketplace.visualstudio.com
+      # - run: npm version ${{ steps.semantic.outputs.release-version }}
+      #   if: steps.semantic.outputs.new-release-published == 'true'
+
+      # - name: Publish to Visual Studio Marketplace
+      #   if: steps.semantic.outputs.new-release-published == 'true'
+      #   uses: HaaLeo/publish-vscode-extension@v1
+      #   with:
+      #     dryrun: true
+      #     pat: ${{ secrets.VS_MARKETPLACE_TOKEN }}
+      #     registryUrl: https://marketplace.visualstudio.com

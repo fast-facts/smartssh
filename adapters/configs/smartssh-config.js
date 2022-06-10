@@ -7,7 +7,7 @@ adapter.codesettings = true;
 adapter.formatter = function () {
   var result = true;
   var configs_array = [];
-  var elements = vscode.workspace.getConfiguration('sshextension').serverList;
+  var elements = vscode.workspace.getConfiguration('smartssh').serverList;
   elements.forEach(function (element) {
     configs_array.push(format(element));
   });

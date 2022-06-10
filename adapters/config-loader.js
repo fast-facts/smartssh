@@ -12,7 +12,7 @@ var pathjoin = (function (_super) {
 })(path.join);
 
 config.supported_configs = {
-  "sshextension": require("./configs/sshextension-config"),
+  "smartssh": require("./configs/smartssh-config"),
   "ftp-simple": require("./configs/ftp-simple-config")
 }
 
