@@ -72,11 +72,11 @@ config.getConfigContents = function () {
     }
     if (result) {
       merged_configs = merged_configs.concat(configs);
-      messages.push('Loaded ' + configs.length +' servers from "' + (!adapter.codesettings ? _this.getUserSettingsLocation(adapter.filename) : adapter.filename) + '"');
+      messages.push('Loaded ' + configs.length + ' servers from "' + (!adapter.codesettings ? _this.getUserSettingsLocation(adapter.filename) : adapter.filename) + '"');
     }
     else {
       messages.push('Config file "' + _this.getUserSettingsLocation(adapter.filename) + '" is broken, it\'s skipped.');
     }
   });
-  return {"merged_configs": merged_configs, "messages": messages};
+  return { "merged_configs": merged_configs, "messages": messages };
 }

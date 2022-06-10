@@ -1,6 +1,6 @@
 const vscode = require('vscode');
 
-var format = function (element){
+var format = function (element) {
   var show_hosts = vscode.workspace.getConfiguration('sshextension').showHostsInPickLists;
   var config = {
     "name": (show_hosts) ? element.username + '@' + element.host : element.name, // Used for serverlist
