@@ -144,39 +144,41 @@ function openSSHConnection(serverName, isFastConnection, forwardingArgs = null) 
       outputChannel.appendLine("Check host or username for '" + server.configuration.host + "'");
       hasErrors = true;
     }
-    var sshCommand = 'ssh ' + ((forwardingArgs != null) ? forwardingArgs + " " : "") + server.configuration.host + ' -l ' + server.configuration.username;
-    // Add port if different from default port
-    if (server.configuration.port !== undefined && server.configuration.port && server.configuration.port !== 22)
-      sshCommand += ' -p ' + server.configuration.port;
-    var sshAuthorizationMethod = "byPass";
-    // Authorization through an agent
-    if (server.configuration.agent !== undefined && server.configuration.agent)
-      sshAuthorizationMethod = "agent";
-    // Authorization by private key
-    if (server.configuration.privateKey !== undefined && server.configuration.privateKey) {
-      sshCommand += ' -i "' + server.configuration.privateKey + '"';
-      sshAuthorizationMethod = "byPrivateKey";
-    }
     if (!hasErrors) {
+      var sshCommand = 'ssh ' + ((forwardingArgs != null) ? forwardingArgs + " " : "") + server.configuration.host + ' -l ' + server.configuration.username;
+      // Add port if different from default port
+      if (server.configuration.port !== undefined && server.configuration.port && server.configuration.port !== 22)
+        sshCommand += ' -p ' + server.configuration.port;
+      var sshAuthorizationMethod = "byPass";
+      // Authorization through an agent
+      if (server.configuration.agent !== undefined && server.configuration.agent)
+        sshAuthorizationMethod = "agent";
+      // Authorization by private key
+      if (server.configuration.privateKey !== undefined && server.configuration.privateKey) {
+        sshCommand += ' -i "' + server.configuration.privateKey + '"';
+        sshAuthorizationMethod = "byPrivateKey";
+      }
+      var remoteCommands = [];
+      if (vscode.workspace.getConfiguration('sshextension').openProjectCatalog) {
+        if (isFastConnection)
+          remoteCommands.push("cd " + fastOpenConnectionProjectPath);
+      } else if (server.configuration.path !== undefined) {
+        remoteCommands.push("cd " + server.configuration.path);
+      }
+      if (server.configuration.customCommands !== undefined && server.configuration.customCommands.length) {
+        remoteCommands.push(...server.configuration.customCommands);
+      }
+      else if (vscode.workspace.getConfiguration('sshextension').customCommands.length) {
+        remoteCommands.push(...vscode.workspace.getConfiguration('sshextension').customCommands);
+      }
+      if (remoteCommands.length > 0) {
+        sshCommand += ' -t "' + remoteCommands.map(x => x + '; ').join('') + 'bash --login"';
+      }
       terminal = vscode.window.createTerminal(serverName + ((forwardingArgs != null) ? " (Forwarding)" : ""));
       terminals.push({ "name": serverName, "username": server.configuration.username, "host": server.configuration.host, "terminal": terminal, "isForwarding": (forwardingArgs != null) });
       terminal.sendText(sshCommand);
       if (sshAuthorizationMethod == "byPass") {
         terminal.sendText(server.configuration.password);
-      }
-      if (vscode.workspace.getConfiguration('sshextension').openProjectCatalog) {
-        if (isFastConnection)
-          terminal.sendText("cd " + fastOpenConnectionProjectPath);
-        else if (server.configuration.path !== undefined) {
-          terminal.sendText("cd " + server.configuration.path);
-        }
-      }
-      // If custom commands defined send it to terminal
-      if (server.configuration.customCommands !== undefined && server.configuration.customCommands.length) {
-        terminal.sendText(server.configuration.customCommands.join(' && '));
-      }
-      else if (vscode.workspace.getConfiguration('sshextension').customCommands.length) {
-        terminal.sendText(vscode.workspace.getConfiguration('sshextension').customCommands.join(' && '));
       }
     }
   }
