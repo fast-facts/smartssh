@@ -2,7 +2,7 @@
   "name": "smartssh",
   "displayName": "SmartSSH",
   "description": "Extension for SSH connections using the ftp-simple settings",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "publisher": "smartssh",
   "license": "MIT",
   "engines": {
