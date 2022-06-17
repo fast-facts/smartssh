@@ -1,7 +1,7 @@
 # About SmartSSH
 
-[![Latest Release](https://vsmarketplacebadge.apphb.com/version/itzrabbs.smartssh.svg)](https://marketplace.visualstudio.com/items?itemName=itzrabbs.smartssh)
-[![Installs](https://vsmarketplacebadge.apphb.com/installs-short/itzrabbs.smartssh.svg)](https://marketplace.visualstudio.com/items?itemName=itzrabbs.smartssh)
+[![Latest Release](https://vsmarketplacebadge.apphb.com/version/smartssh.smartssh.svg)](https://marketplace.visualstudio.com/items?itemName=smartssh.smartssh)
+[![Installs](https://vsmarketplacebadge.apphb.com/installs-short/smartssh.smartssh.svg)](https://marketplace.visualstudio.com/items?itemName=smartssh.smartssh)
 
 This extension allows you to open an SSH connection in the integrated terminal.
 The extension was created in order to have access to the SSH in conjunction with the already available access to the FTP.  

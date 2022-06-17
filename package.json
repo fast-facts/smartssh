@@ -146,10 +146,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ItzRabbs/vscode-sshextension.git"
+    "url": "https://github.com/RabbitPlayground/vscode-sshextension.git"
   },
   "bugs": {
-    "url": "https://github.com/ItzRabbs/vscode-sshextension/issues"
+    "url": "https://github.com/RabbitPlayground/vscode-sshextension/issues"
   },
   "devDependencies": {
     "@types/mocha": "^9.1.1",
