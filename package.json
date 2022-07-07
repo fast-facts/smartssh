@@ -164,7 +164,7 @@
     "command-exists": "^1.2.2",
     "filewatcher": "^3.0.1",
     "is-path-inside": "^3.0.3",
-    "moment": "^2.22.2",
+    "moment": "^2.29.4",
     "upath": "^2.0.1"
   }
 }
