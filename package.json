@@ -157,7 +157,7 @@
     "@types/vscode": "^1.10.0",
     "eslint": "^8.27.0",
     "mocha": "^10.1.0",
-    "semantic-release-vsce": "^5.2.4",
+    "semantic-release-vsce": "^5.3.0",
     "typescript": "^4.8.4"
   },
   "dependencies": {
