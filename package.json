@@ -158,7 +158,7 @@
     "eslint": "^8.43.0",
     "mocha": "^10.2.0",
     "semantic-release-vsce": "^5.5.10",
-    "typescript": "^5.1.5"
+    "typescript": "^5.1.6"
   },
   "dependencies": {
     "command-exists": "^1.2.2",
