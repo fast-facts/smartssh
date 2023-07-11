@@ -18,7 +18,7 @@ jobs:
           node-version: 18
       - run: npm install
 
-      - uses: codfish/semantic-release-action@v1
+      - uses: codfish/semantic-release-action@v2
         id: semantic
         with:
           plugins: |
