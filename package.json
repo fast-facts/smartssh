@@ -151,6 +151,13 @@
   "bugs": {
     "url": "https://github.com/fast-facts/vscode-sshextension/issues"
   },
+  "dependencies": {
+    "command-exists": "^1.2.2",
+    "filewatcher": "^3.0.1",
+    "is-path-inside": "^3.0.3",
+    "moment": "^2.29.4",
+    "upath": "^2.0.1"
+  },
   "devDependencies": {
     "@types/mocha": "^10.0.1",
     "@types/node": "^20.5.0",
@@ -159,12 +166,5 @@
     "mocha": "^10.2.0",
     "semantic-release-vsce": "^5.6.0",
     "typescript": "^5.1.6"
-  },
-  "dependencies": {
-    "command-exists": "^1.2.2",
-    "filewatcher": "^3.0.1",
-    "is-path-inside": "^3.0.3",
-    "moment": "^2.29.4",
-    "upath": "^2.0.1"
   }
 }

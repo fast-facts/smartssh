@@ -18,3 +18,11 @@ updates:
       - dependency-name: '@types/vscode'
       - dependency-name: 'is-path-inside'
         versions: ['>=4.0.0']
+    groups:
+      typescript and eslint:
+        patterns:
+          - '*typescript*'
+          - '*eslint*'
+      types:
+        patterns:
+          - '@types/*'
