@@ -165,6 +165,6 @@
     "eslint": "^8.55.0",
     "mocha": "^10.2.0",
     "semantic-release-vsce": "^5.6.4",
-    "typescript": "^5.3.2"
+    "typescript": "^5.3.3"
   }
 }
