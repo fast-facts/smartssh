@@ -155,7 +155,7 @@
     "command-exists": "^1.2.2",
     "filewatcher": "^3.0.1",
     "is-path-inside": "^3.0.3",
-    "moment": "^2.30.0",
+    "moment": "^2.30.1",
     "upath": "^2.0.1"
   },
   "devDependencies": {
