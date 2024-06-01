@@ -2,7 +2,7 @@
   "name": "smartssh",
   "displayName": "SmartSSH",
   "description": "Extension for SSH connections using the ftp-simple settings",
-  "version": "1.0.2",
+  "version": "0.0.0",
   "publisher": "smartssh",
   "license": "MIT",
   "engines": {
@@ -146,10 +146,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/fast-facts/vscode-sshextension.git"
+    "url": "https://github.com/fast-facts/smartssh.git"
   },
   "bugs": {
-    "url": "https://github.com/fast-facts/vscode-sshextension/issues"
+    "url": "https://github.com/fast-facts/smartssh/issues"
   },
   "dependencies": {
     "command-exists": "^1.2.2",
