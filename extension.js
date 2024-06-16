@@ -172,7 +172,7 @@ function openSSHConnection(serverName, isFastConnection, forwardingArgs = null) 
         remoteCommands.push(...vscode.workspace.getConfiguration('smartssh').customCommands);
       }
       if (remoteCommands.length > 0) {
-        sshCommand += ' -t "' + remoteCommands.map(x => x + '; ').join('') + 'bash --login"';
+        sshCommand += ' -t "' + remoteCommands.map(x => x + '; ').join('') + 'eval $(echo \'$SHELL\') --login"';
       }
       terminal = vscode.window.createTerminal(serverName + ((forwardingArgs != null) ? " (Forwarding)" : ""));
       terminals.push({ "name": serverName, "username": server.configuration.username, "host": server.configuration.host, "terminal": terminal, "isForwarding": (forwardingArgs != null) });
