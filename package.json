@@ -163,7 +163,7 @@
     "@types/node": "^20.14.8",
     "@types/vscode": "^1.10.0",
     "eslint": "^9.5.0",
-    "mocha": "^10.4.0",
+    "mocha": "^10.5.1",
     "semantic-release-vsce": "^5.7.1",
     "typescript": "^5.5.2"
   }
