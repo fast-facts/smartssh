@@ -8,18 +8,18 @@ module.exports = config;
 var pathjoin = (function (_super) {
   return function () {
     return path.normalize(_super.apply(this, arguments)).replace(/\\/g, '/');
-  }
+  };
 })(path.join);
 
 config.supported_configs = {
-  "smartssh": require("./configs/smartssh-config"),
-  "ftp-simple": require("./configs/ftp-simple-config")
-}
+  smartssh: require('./configs/smartssh-config'),
+  'ftp-simple': require('./configs/ftp-simple-config'),
+};
 
 config.watcher = filewatcher();
 config.startWatchers = function () {
   var _this = this;
-  Object.keys(this.supported_configs).forEach(function (configname) {
+  Object.keys(this.supported_configs).forEach(configname => {
     var adapter = _this.supported_configs[configname];
     if (!adapter.codesettings) {
       if (_this.exists(adapter.filename)) {
@@ -27,12 +27,12 @@ config.startWatchers = function () {
       }
     }
   });
-}
+};
 config.getUserSettingsLocation = function (filename) {
   var folder = process.env.APPDATA || (process.platform == 'darwin' ? process.env.HOME + '/Library/Application Support' : process.platform == 'linux' ? pathjoin(homedir, '.config') : '/var/local');
-  if (/^[A-Z]\:[/\\]/.test(folder)) folder = folder.substring(0, 1).toLowerCase() + folder.substring(1);
-  return pathjoin(folder, "/Code/User/", filename ? filename : "");
-}
+  if (/^[A-Z]:[/\\]/.test(folder)) folder = folder.substring(0, 1).toLowerCase() + folder.substring(1);
+  return pathjoin(folder, '/Code/User/', filename ? filename : '');
+};
 config.exists = function (filename, local = false) {
   var result = true;
   if (fs.accessSync) {
@@ -49,34 +49,32 @@ config.exists = function (filename, local = false) {
     );
   }
   return result;
-}
+};
 config.getConfigContents = function () {
   var _this = this;
   var merged_configs = [];
   var messages = [];
-  Object.keys(this.supported_configs).forEach(function (configname) {
+  Object.keys(this.supported_configs).forEach(configname => {
     var adapter = _this.supported_configs[configname];
     if (!adapter.codesettings) {
       if (_this.exists(adapter.filename)) {
         var filepath = _this.getUserSettingsLocation(adapter.filename);
         var content = fs.readFileSync(filepath).toString();
         var { result, configs } = adapter.formatter(content);
-      }
-      else {
+      } else {
         messages.push('Config file "' + _this.getUserSettingsLocation(adapter.filename) + '" not exists, it\'s skipped.');
         return;
       }
-    }
-    else {
+    } else {
+      // eslint-disable-next-line no-redeclare
       var { result, configs } = adapter.formatter();
     }
     if (result) {
       merged_configs = merged_configs.concat(configs);
       messages.push('Loaded ' + configs.length + ' servers from "' + (!adapter.codesettings ? _this.getUserSettingsLocation(adapter.filename) : adapter.filename) + '"');
-    }
-    else {
+    } else {
       messages.push('Config file "' + _this.getUserSettingsLocation(adapter.filename) + '" is broken, it\'s skipped.');
     }
   });
-  return { "merged_configs": merged_configs, "messages": messages };
-}
+  return { merged_configs, messages };
+};

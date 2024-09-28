@@ -2,8 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 var vscode = require('vscode');
 var commandExistsSync = require('command-exists').sync;
-var upath = require("upath");
-var moment = require("moment");
+var upath = require('upath');
+var moment = require('moment');
 var isPathInside = require('is-path-inside');
 var configLoader = require('./adapters/config-loader');
 
@@ -17,7 +17,7 @@ var terminals = [];
 // Shows a list of servers and returns a promise for what to do with the server
 function selectServer() {
   if (!servers.length) {
-    vscode.window.showInformationMessage("You don't have any servers");
+    vscode.window.showInformationMessage('You don\'t have any servers');
     return;
   }
 
@@ -29,52 +29,51 @@ function selectServer() {
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 function activate(context) {
-
   initExtension();
 
   // Command palette 'Open SSH Connection'
-  context.subscriptions.push(vscode.commands.registerCommand('smartssh.openConnection', function () {
+  context.subscriptions.push(vscode.commands.registerCommand('smartssh.openConnection', () => {
     selectServer().then(s => openSSHConnection(s, false));
   }));
 
   // Command palette 'SSH Port Forwarding'
-  context.subscriptions.push(vscode.commands.registerCommand('smartssh.portForwarding', function () {
+  context.subscriptions.push(vscode.commands.registerCommand('smartssh.portForwarding', () => {
     selectServer().then(s => createForwarding(s));
   }));
 
   // Launch reload configs if config files has been changed
   configLoader.startWatchers();
-  configLoader.watcher.on('change', function (file) {
+  configLoader.watcher.on('change', file => {
     loadServerList(loadServerConfigs());
   });
-  vscode.workspace.onDidChangeConfiguration(function (event) {
+  vscode.workspace.onDidChangeConfiguration(event => {
     loadServerList(loadServerConfigs());
   });
 
-  // If terminal closed 
-  context.subscriptions.push(vscode.window.onDidCloseTerminal(function (event) {
+  // If terminal closed
+  context.subscriptions.push(vscode.window.onDidCloseTerminal(event => {
     var terminal = terminals.find(function (element, index, array) {
-      return element.terminal._id == this._id
+      return element.terminal._id == this._id;
     }, event);
     if (terminal === undefined) return;
     terminals.shift(terminal);
-    outputChannel.appendLine("A terminal with a session for '" + terminal.host + "' has been killed.");
+    outputChannel.appendLine('A terminal with a session for \'' + terminal.host + '\' has been killed.');
   }));
   // If the edited file is in the project directory
-  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(function (event) {
+  context.subscriptions.push(vscode.window.onDidChangeActiveTextEditor(event => {
     manageFastOpenConnectionButtonState();
   }));
-  context.subscriptions.push(vscode.commands.registerCommand('smartssh.fastOpenConnection', function (c) {
+  context.subscriptions.push(vscode.commands.registerCommand('smartssh.fastOpenConnection', c => {
     openSSHConnection(fastOpenConnectionServerName, true);
   }));
 
   var api = {
     connections(host = '', username = '') {
-      return terminals.filter(function (element, index, array) {
-        return (element.host == host || !host.length) && (element.username == username || !username.length)
-      })
-    }
-  }
+      return terminals.filter((element, index, array) => {
+        return (element.host == host || !host.length) && (element.username == username || !username.length);
+      });
+    },
+  };
   return api;
 }
 exports.activate = activate;
@@ -87,31 +86,29 @@ function deactivate() {
 function loadServerConfigs() {
   var result = true;
   var { merged_configs, messages } = configLoader.getConfigContents();
-  messages.forEach(function (message) {
+  messages.forEach(message => {
     outputChannel.appendLine(message);
   });
-  return { "result": result, "json": merged_configs };
+  return { result, json: merged_configs };
 }
 
 // Function initializes an array of servers from a string or JSON object
 function loadServerList(source) {
   var serversConfig = null;
-  if (typeof (source) === "string") { // If the parameter is a string
+  if (typeof (source) === 'string') { // If the parameter is a string
     var parsedSource = JSON.parse(source);
-    serversConfig = { "result": parsedSource !== undefined, "json": parsedSource };
-  }
-  else { // If the parameter is a JSON object
+    serversConfig = { result: parsedSource !== undefined, json: parsedSource };
+  } else { // If the parameter is a JSON object
     serversConfig = source;
   }
   if (serversConfig.result) {
     servers = [];
-    serversConfig.json.forEach(function (element) {
-      var server = { "name": element.name, "configuration": element };
+    serversConfig.json.forEach(element => {
+      var server = { name: element.name, configuration: element };
       servers.push(server);
     }, this);
-  }
-  else {
-    outputChannel.appendLine("Unable to load server list, check configuration files.");
+  } else {
+    outputChannel.appendLine('Unable to load server list, check configuration files.');
     return false;
   }
   return true;
@@ -121,78 +118,75 @@ function loadServerList(source) {
 function checkSSHExecutable() {
   var checkResult = commandExistsSync('ssh');
   if (checkResult) {
-    outputChannel.appendLine("Find ssh on your system.");
+    outputChannel.appendLine('Find ssh on your system.');
   } else {
-    outputChannel.appendLine("Did not find ssh on your system.");
+    outputChannel.appendLine('Did not find ssh on your system.');
   }
-  outputChannel.appendLine("If you use a third-party terminal, then make sure that there is an SSH utility.");
+  outputChannel.appendLine('If you use a third-party terminal, then make sure that there is an SSH utility.');
   return checkResult;
 }
 
 // This method creates a terminal for the server by its name
 function openSSHConnection(serverName, isFastConnection, forwardingArgs = null) {
   if (serverName === undefined) return false;
-  var server = servers.find(function (element, index, array) { return element.name == this }, serverName);
+  var server = servers.find(function (element, index, array) { return element.name == this; }, serverName);
   var terminal = terminals.find(function (element, index, array) {
-    return element.name == this.terminalName && element.isForwarding == this.isForwarding
-  }, { "terminalName": serverName, "isForwarding": (forwardingArgs != null) });
+    return element.name == this.terminalName && element.isForwarding == this.isForwarding;
+  }, { terminalName: serverName, isForwarding: (forwardingArgs != null) });
   var terminalIsNew = true;
   var hasErrors = false;
   if (terminal === undefined || (vscode.workspace.getConfiguration('smartssh').allowMultipleConnections && forwardingArgs == null)) { // If the terminal does not exist
-    outputChannel.appendLine("New terminal session initialization for '" + server.configuration.host + "'...");
+    outputChannel.appendLine('New terminal session initialization for \'' + server.configuration.host + '\'...');
     if (server.configuration.host === undefined || server.configuration.username === undefined) {
-      outputChannel.appendLine("Check host or username for '" + server.configuration.host + "'");
+      outputChannel.appendLine('Check host or username for \'' + server.configuration.host + '\'');
       hasErrors = true;
     }
     if (!hasErrors) {
-      var sshCommand = 'ssh ' + ((forwardingArgs != null) ? forwardingArgs + " " : "") + server.configuration.host + ' -l ' + server.configuration.username;
+      var sshCommand = 'ssh ' + ((forwardingArgs != null) ? forwardingArgs + ' ' : '') + server.configuration.host + ' -l ' + server.configuration.username;
       // Add port if different from default port
       if (server.configuration.port !== undefined && server.configuration.port && server.configuration.port !== 22)
         sshCommand += ' -p ' + server.configuration.port;
-      var sshAuthorizationMethod = "byPass";
+      var sshAuthorizationMethod = 'byPass';
       // Authorization through an agent
       if (server.configuration.agent !== undefined && server.configuration.agent)
-        sshAuthorizationMethod = "agent";
+        sshAuthorizationMethod = 'agent';
       // Authorization by private key
       if (server.configuration.privateKey !== undefined && server.configuration.privateKey) {
         sshCommand += ' -i "' + server.configuration.privateKey + '"';
-        sshAuthorizationMethod = "byPrivateKey";
+        sshAuthorizationMethod = 'byPrivateKey';
       }
       var remoteCommands = [];
       if (vscode.workspace.getConfiguration('smartssh').openProjectCatalog) {
         if (isFastConnection)
-          remoteCommands.push("cd " + fastOpenConnectionProjectPath);
+          remoteCommands.push('cd ' + fastOpenConnectionProjectPath);
       } else if (server.configuration.path !== undefined) {
-        remoteCommands.push("cd " + server.configuration.path);
+        remoteCommands.push('cd ' + server.configuration.path);
       }
       if (server.configuration.customCommands !== undefined && server.configuration.customCommands.length) {
         remoteCommands.push(...server.configuration.customCommands);
-      }
-      else if (vscode.workspace.getConfiguration('smartssh').customCommands.length) {
+      } else if (vscode.workspace.getConfiguration('smartssh').customCommands.length) {
         remoteCommands.push(...vscode.workspace.getConfiguration('smartssh').customCommands);
       }
       if (remoteCommands.length > 0) {
         sshCommand += ' -t "' + remoteCommands.map(x => x + '; ').join('') + 'eval $(echo \'$SHELL\') --login"';
       }
-      terminal = vscode.window.createTerminal(serverName + ((forwardingArgs != null) ? " (Forwarding)" : ""));
-      terminals.push({ "name": serverName, "username": server.configuration.username, "host": server.configuration.host, "terminal": terminal, "isForwarding": (forwardingArgs != null) });
+      terminal = vscode.window.createTerminal(serverName + ((forwardingArgs != null) ? ' (Forwarding)' : ''));
+      terminals.push({ name: serverName, username: server.configuration.username, host: server.configuration.host, terminal: terminal, isForwarding: (forwardingArgs != null) });
       terminal.sendText(sshCommand);
-      if (sshAuthorizationMethod == "byPass") {
+      if (sshAuthorizationMethod == 'byPass') {
         terminal.sendText(server.configuration.password);
       }
     }
-  }
-  else { // If the terminal instance was found
+  } else { // If the terminal instance was found
     terminal = terminal.terminal;
     terminalIsNew = false;
   }
   if (!hasErrors) {
     terminal.show();
-    outputChannel.appendLine("A terminal with a session for '" + server.configuration.host + "' has been " + ((terminalIsNew) ? "created and displayed" : "displayed."));
-  }
-  else {
-    outputChannel.appendLine("A terminal with a session for '" + server.configuration.host + "' has been not started, because errors were found.");
-    vscode.window.showErrorMessage("Terminal has been not started, check output for more info.", "Check output").then(function (button) {
+    outputChannel.appendLine('A terminal with a session for \'' + server.configuration.host + '\' has been ' + ((terminalIsNew) ? 'created and displayed' : 'displayed.'));
+  } else {
+    outputChannel.appendLine('A terminal with a session for \'' + server.configuration.host + '\' has been not started, because errors were found.');
+    vscode.window.showErrorMessage('Terminal has been not started, check output for more info.', 'Check output').then(button => {
       outputChannel.show();
     });
   }
@@ -203,82 +197,80 @@ function createForwarding(serverName) {
   function validateHostPort(port, domainReq = false) {
     var portRegex = /^(?:(?:\S|[^:])+:{1})?(?:[0-5]?\d{1,4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2]\d|6553[0-6]){1}$/;
     if (domainReq) portRegex = /^(?:(?:\S|[^:])+:{1}){1}(?:[0-5]?\d{1,4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2]\d|6553[0-6]){1}$/;
-    return (portRegex.test(port)) ? null : "Please enter a domain " + (!domainReq ? "(optional)  " : "") + "and port in range 0 - 65535 (e. g. localhost:9000" + (!domainReq ? " or 9000" : "") + ")";
+    return (portRegex.test(port)) ? null : 'Please enter a domain ' + (!domainReq ? '(optional)  ' : '') + 'and port in range 0 - 65535 (e. g. localhost:9000' + (!domainReq ? ' or 9000' : '') + ')';
   }
   function createForwardingArgs(option, firstAddress, secondAddress = null) {
-    var forwardingArgs = option + " " + firstAddress;
+    var forwardingArgs = option + ' ' + firstAddress;
     if (secondAddress != null)
-      forwardingArgs += ":" + secondAddress;
+      forwardingArgs += ':' + secondAddress;
     return forwardingArgs;
   }
   function toRecentlyUsed(recentlyUsedForwardings, forwardingArgs) {
     if (recentlyUsedForwardings.indexOf(forwardingArgs) == -1) {
-      vscode.window.showInformationMessage("Want to save this forwarding in recently used?", "Yes").then(function (button) {
-        if (button == "Yes") {
+      vscode.window.showInformationMessage('Want to save this forwarding in recently used?', 'Yes').then(button => {
+        if (button == 'Yes') {
           recentlyUsedForwardings.push(forwardingArgs);
-          vscode.workspace.getConfiguration("smartssh").update("recentlyUsedForwardings", recentlyUsedForwardings, true)
+          vscode.workspace.getConfiguration('smartssh').update('recentlyUsedForwardings', recentlyUsedForwardings, true);
         }
       });
     }
   }
   var types = {
     'Local to remote': {
-      'firstAdressPrompt': "Type local address/port (e. g. localhost:9000 or 9000)",
-      'secondAddressPrompt': "Type remote address (e. g. localhost:9000)",
-      "firstDomainReq": false,
-      'secondDomainReq': true,
-      "option": "-L"
+      firstAdressPrompt: 'Type local address/port (e. g. localhost:9000 or 9000)',
+      secondAddressPrompt: 'Type remote address (e. g. localhost:9000)',
+      firstDomainReq: false,
+      secondDomainReq: true,
+      option: '-L',
     },
     'Remote to local': {
-      'firstAdressPrompt': "Type remote address/port (e. g. localhost:9000 or 9000)",
-      'secondAddressPrompt': "Type local address (e. g. localhost:9000)",
-      "firstDomainReq": false,
-      'secondDomainReq': true,
-      "option": "-R"
+      firstAdressPrompt: 'Type remote address/port (e. g. localhost:9000 or 9000)',
+      secondAddressPrompt: 'Type local address (e. g. localhost:9000)',
+      firstDomainReq: false,
+      secondDomainReq: true,
+      option: '-R',
     },
-    'SOCKS': {
-      'firstAdressPrompt': "Type address for SOCKS (e. g. localhost:9000)",
-      "firstDomainReq": true,
-      "option": "-D"
-    }
-  }
-  var recentlyUsedForwardings = vscode.workspace.getConfiguration("smartssh").recentlyUsedForwardings;
+    SOCKS: {
+      firstAdressPrompt: 'Type address for SOCKS (e. g. localhost:9000)',
+      firstDomainReq: true,
+      option: '-D',
+    },
+  };
+  var recentlyUsedForwardings = vscode.workspace.getConfiguration('smartssh').recentlyUsedForwardings;
   if (recentlyUsedForwardings.length) {
     types['Recently used'] = {};
   }
   // Show select of types
-  vscode.window.showQuickPick(Object.keys(types), 'Select forwarding type...').then(function (type) {
+  vscode.window.showQuickPick(Object.keys(types), 'Select forwarding type...').then(type => {
     if (type === undefined) return;
     // Show input for first address
-    if (type != "Recently used") {
+    if (type != 'Recently used') {
       vscode.window.showInputBox({
-        "validateInput": (s) => {
-          return validateHostPort(s, types[type].firstDomainReq)
-        }, "prompt": types[type].firstAdressPrompt, "ignoreFocusOut": true
-      }).then(function (firstAddress) {
+        validateInput: s => {
+          return validateHostPort(s, types[type].firstDomainReq);
+        }, prompt: types[type].firstAdressPrompt, ignoreFocusOut: true,
+      }).then(firstAddress => {
         if (firstAddress === undefined || !firstAddress.length) return;
-        if (type != "SOCKS") {
+        if (type != 'SOCKS') {
           // Show input for second address
           vscode.window.showInputBox({
-            "validateInput": (s) => {
-              return validateHostPort(s, types[type].secondDomainReq)
-            }, "prompt": types[type].secondAddressPrompt, "ignoreFocusOut": true
-          }).then(function (secondAddress) {
+            validateInput: s => {
+              return validateHostPort(s, types[type].secondDomainReq);
+            }, prompt: types[type].secondAddressPrompt, ignoreFocusOut: true,
+          }).then(secondAddress => {
             if (secondAddress === undefined || !secondAddress.length) return;
             var forwardingArgs = createForwardingArgs(types[type].option, firstAddress, secondAddress);
             openSSHConnection(serverName, false, forwardingArgs);
             toRecentlyUsed(recentlyUsedForwardings, forwardingArgs);
           });
-        }
-        else {
+        } else {
           var forwardingArgs = createForwardingArgs(types[type].option, firstAddress);
           openSSHConnection(serverName, false, forwardingArgs);
           toRecentlyUsed(recentlyUsedForwardings, forwardingArgs);
         }
       });
-    }
-    else {
-      vscode.window.showQuickPick(recentlyUsedForwardings, 'Select forwarding arguments from recently used...').then(function (forwardingArgs) {
+    } else {
+      vscode.window.showQuickPick(recentlyUsedForwardings, 'Select forwarding arguments from recently used...').then(forwardingArgs => {
         if (forwardingArgs === undefined) return;
         openSSHConnection(serverName, false, forwardingArgs);
       });
@@ -291,16 +283,16 @@ function getProjectByFilePath(filePath) {
   var projectPath = null;
   // Get path to edited file with fixed drive letter case
   var openedFileName = upath.normalize(filePath);
-  openedFileName = openedFileName.replace(/\w:/g, function (g) { return g.toLowerCase() })
+  openedFileName = openedFileName.replace(/\w:/g, g => { return g.toLowerCase(); });
   // Find the server that has the project containing this file
   var server = servers.find(function (element, index, array) {
     // If the server does not have any projects, go to the next
     if (element.configuration.project === undefined) return false;
     var thisServerMapped = false;
-    Object.keys(element.configuration.project).forEach(function (item) {
+    Object.keys(element.configuration.project).forEach(item => {
       // Get project path with fixed drive letter case
       var serverProjectPath = upath.normalize(item);
-      serverProjectPath = serverProjectPath.replace(/\w:/g, function (g) { return g.toLowerCase() });
+      serverProjectPath = serverProjectPath.replace(/\w:/g, g => { return g.toLowerCase(); });
       thisServerMapped = isPathInside(openedFileName, serverProjectPath);
       if (thisServerMapped) {
         projectPath = element.configuration.project[item];
@@ -308,7 +300,7 @@ function getProjectByFilePath(filePath) {
     }, this);
     return thisServerMapped;
   }, openedFileName);
-  return { "server": server, "projectPath": projectPath };
+  return { server, projectPath };
 }
 
 function manageFastOpenConnectionButtonState() {
@@ -320,30 +312,28 @@ function manageFastOpenConnectionButtonState() {
   }
   // If the server is found then show the button and save the server name
   if (mappedServer !== undefined) {
-    fastOpenConnectionButton.text = "$(terminal) Open SSH on " + mappedServer.configuration.name;
+    fastOpenConnectionButton.text = '$(terminal) Open SSH on ' + mappedServer.configuration.name;
     fastOpenConnectionButton.show();
     fastOpenConnectionServerName = mappedServer.configuration.name;
-  }
-  // Otherwise hide the button
-  else {
+  } else { // Otherwise hide the button
     fastOpenConnectionButton.hide();
   }
 }
 
 // Initialize extension
 function initExtension() {
-  outputChannel = vscode.window.createOutputChannel("ssh-extension");
+  outputChannel = vscode.window.createOutputChannel('ssh-extension');
   outputChannel.appendLine = (function (_super) {
     return function () {
-      var now_formatted = moment().format("YYYY-MM-DD HH:mm:ss");
-      arguments[0] = "[" + now_formatted + "] " + arguments[0];
+      var now_formatted = moment().format('YYYY-MM-DD HH:mm:ss');
+      arguments[0] = '[' + now_formatted + '] ' + arguments[0];
       return _super.apply(this, arguments);
     };
   })(outputChannel.appendLine);
   checkSSHExecutable();
   loadServerList(loadServerConfigs());
   fastOpenConnectionButton = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Left);
-  fastOpenConnectionButton.command = "smartssh.fastOpenConnection";
+  fastOpenConnectionButton.command = 'smartssh.fastOpenConnection';
   manageFastOpenConnectionButtonState();
   return true;
 }
