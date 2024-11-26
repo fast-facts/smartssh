@@ -170,6 +170,6 @@
     "mocha": "^10.8.2",
     "semantic-release-vsce": "^5.7.4",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.15.0"
+    "typescript-eslint": "^8.16.0"
   }
 }
