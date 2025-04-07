@@ -168,6 +168,6 @@
     "eslint-config-final": "^1.5.12",
     "mocha": "^11.1.0",
     "semantic-release-vsce": "^6.0.7",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }
