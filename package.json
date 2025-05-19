@@ -166,7 +166,7 @@
     "@types/node": "^22.15.19",
     "@types/vscode": "^1.10.0",
     "eslint-config-final": "^1.5.18",
-    "mocha": "^11.2.2",
+    "mocha": "^11.3.0",
     "semantic-release-vsce": "^6.0.8",
     "typescript": "^5.8.3"
   }
